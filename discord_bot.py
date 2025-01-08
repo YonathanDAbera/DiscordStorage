@@ -1,5 +1,6 @@
 from typing import Final
 import os
+import re
 from dotenv import load_dotenv
 from discord import Intents, Client, File
 from splitter import split_files, merge_files 
@@ -21,14 +22,24 @@ TEMP_DIRECTORY = './temporary/'
 FILE_PATH = '/Users/yabera/Desktop/DiscordStorage/Syllabus_COMP112_F24 (4).docx'
 SIZE_LIMIT = 1000000  # 1 MB
 
-# Function to upload split files
+def rename_file(file_path: str) -> str:
+    directory, original_name = os.path.split(file_path)
+    name, extension = os.path.splitext(original_name)
+
+    changed_name = re.sub(r'[^\w.]', '_', name)
+    new_name = f"{changed_name}{extension}"
+    new_path = os.path.join(directory, new_name)
+    os.rename(file_path, new_path)
+    
+    return new_path
+
+
 async def upload_files():
     try:
-        split_files(FILE_PATH, SIZE_LIMIT)
-        # List files in the temporary directory
+        split_files(rename_file(FILE_PATH), SIZE_LIMIT)
+   
         files = os.listdir(TEMP_DIRECTORY)
 
-        # Send each file to the specified channel
         guild = client.get_guild(int(SERVER_ID))
 
         new_channel = await guild.create_text_channel(name=f'{FILE_PATH.split('/')[-1]}')
@@ -61,8 +72,10 @@ async def download_files():
         messages = [message async for message in current_channel.history(limit=float('inf'))]
         for message in messages:
             for attachment in message.attachments:
-                await attachment.save(f'./temporary/{attachment.filename}')
-        merge_files('./temporary/', current_channel.name) #Would be easier to save the file extension somewhere, maybe firebase
+                await attachment.save(f'/Users/yabera/Desktop/DiscordStorage/temporary/{attachment.filename}')
+
+        
+        merge_files('/Users/yabera/Desktop/DiscordStorage/temporary/','/Users/yabera/Desktop/DiscordStorage/output/', str(attachment.filename)) #Would be easier to save the file extension somewhere, maybe firebase
 
     except Exception as e:
         print(f"An error occurred while downloading files: {e}")
