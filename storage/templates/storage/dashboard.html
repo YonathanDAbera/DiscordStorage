@@ -1,0 +1,87 @@
+{% extends 'storage/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Dashboard</h2>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Your Files</h5>
+                    
+                    {% if files %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Filename</th>
+                                        <th>Size</th>
+                                        <th>Upload Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for file in files %}
+                                    <tr>
+                                        <td>{{ file.original_filename }}</td>
+                                        <td>{{ file.file_size|filesizeformat }}</td>
+                                        <td>{{ file.upload_date|date:"M d, Y H:i" }}</td>
+                                        <td>
+                                            {% if file.is_split %}
+                                                <span class="badge bg-info">Split ({{ file.split_count }} parts)</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Single file</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'download_file' file.id %}" class="btn btn-sm btn-outline-primary">Download</a>
+                                            <a href="{% url 'delete_file' file.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No files uploaded yet. <a href="{% url 'upload_page' %}">Upload your first file</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Upload Files</h5>
+                    <p class="card-text">Upload new files to Discord storage</p>
+                    <a href="{% url 'upload_page' %}" class="btn btn-primary">Upload</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Download Files</h5>
+                    <p class="card-text">Download your stored files</p>
+                    <a href="{% url 'download_page' %}" class="btn btn-success">Download</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Files</h5>
+                    <p class="card-text">Organize and delete files</p>
+                    <a href="{% url 'manage_page' %}" class="btn btn-warning">Manage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'storage/base.html' %}
+
+{% block title %}Discord Storage - Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="jumbotron text-center">
+                <h1 class="display-4">Welcome to Discord Storage</h1>
+                <p class="lead">Store your files for free using Discord's unlimited storage capacity</p>
+                <hr class="my-4">
+                <p>Upload large files by automatically splitting them into smaller chunks and storing them in Discord channels.</p>
+                {% if user.is_authenticated %}
+                    <a class="btn btn-primary btn-lg" href="{% url 'dashboard' %}" role="button">Go to Dashboard</a>
+                {% else %}
+                    <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Login to Start</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

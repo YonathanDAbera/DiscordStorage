@@ -1,0 +1,61 @@
+{% extends 'storage/base.html' %}
+
+{% block title %}Download Files{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Download Files</h2>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Available Downloads</h5>
+                    
+                    {% if files %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Filename</th>
+                                        <th>Size</th>
+                                        <th>Upload Date</th>
+                                        <th>Type</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for file in files %}
+                                    <tr>
+                                        <td>{{ file.original_filename }}</td>
+                                        <td>{{ file.file_size|filesizeformat }}</td>
+                                        <td>{{ file.upload_date|date:"M d, Y H:i" }}</td>
+                                        <td>
+                                            {% if file.is_split %}
+                                                <span class="badge bg-info">Split File</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Single File</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'download_file' file.id %}" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-download"></i> Download
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center">
+                            <p class="text-muted">No files available for download.</p>
+                            <a href="{% url 'upload_page' %}" class="btn btn-primary">Upload a file</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
