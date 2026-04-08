@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model File {
+  id               String      @id @default(uuid())
+  filename         String
+  size             Int
+  uploadDate       DateTime    @default(now())
+  discordMessageId String?
+  isSplit          Boolean     @default(false)
+  chunkCount       Int         @default(1)
+  encrypted        Boolean     @default(false)
+  extension        String?
+  chunks           FileChunk[]
+}
+
+model FileChunk {
+  id               String   @id @default(uuid())
+  fileId           String
+  file             File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  partNumber       Int
+  discordMessageId String
+}
